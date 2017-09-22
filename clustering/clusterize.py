@@ -37,7 +37,7 @@ def get_word_from_cluster(c_num):
 if __name__ == '__main__':
     # arg parse
     opts = docopt(__doc__)
-    print(opts)
+    # print(opts)
     if not opts['-k'] or not opts['-f']:
         exit()
     if not opts['--pos_t']:
@@ -62,11 +62,14 @@ if __name__ == '__main__':
 
 
     # PRINTING!!
-    print([x for x in zip(WORDS, KMEANS.labels_)][:10])
+    #print([x for x in zip(WORDS, KMEANS.labels_)][:10])
 
-    print(get_cluster_sizes(n_clusters))
+    #print(get_cluster_sizes(n_clusters))
 
-    clus=get_word_from_cluster(4)
-    print(clus, len(clus))
-    #cluster_sizes = np.array()
-    #len(kmeans.cluster_centers_[0])
+    for i in range(n_clusters):
+        print('-----------------')
+        print('Cluster number ', i)
+        words_in_cluster_n = get_word_from_cluster(i)
+        print('Cluster size: ', len(words_in_cluster_n))
+        print('Words: ')
+        print(str.join(' ',words_in_cluster_n))

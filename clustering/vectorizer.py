@@ -54,7 +54,7 @@ class Vectorizer():
         for sent in tagged_sents:
             for word_idx in range(len(sent)):
                 features = {}
-                word = sent[word_idx][0]
+                word = sent[word_idx][0].lower()
                 pos_tag = sent[word_idx][1]
 
                 # POS-related features
