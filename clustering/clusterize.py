@@ -56,7 +56,7 @@ if __name__ == '__main__':
                 n_init=10, max_iter=300,
                 tol=0.0001, precompute_distances='auto',
                 verbose=0, random_state=None, copy_x=True,
-                n_jobs=1, algorithm='auto').fit(MATRIX)
+                n_jobs=4, algorithm='auto').fit(MATRIX)
 
 
 
