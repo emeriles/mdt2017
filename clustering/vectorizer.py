@@ -1,10 +1,13 @@
 from nltk.tag import StanfordPOSTagger
 from nltk import pos_tag
+from nltk.corpus import stopwords
 
 from sklearn.feature_extraction import DictVectorizer
 import numpy
 
 import re
+
+
 
 class POS_Tagger():
     def __init__(self, tagger='nltk'):
@@ -24,7 +27,7 @@ class POS_Tagger():
         return tagged
 
 class Vectorizer():
-    def __init__(self, corpus, vec_type='sintactic', pos_tagger='nltk'):
+    def __init__(self, corpus, vec_type='morphosyntactic', pos_tagger='nltk'):
         self.corpus = corpus
         self.vec_type = vec_type
         self.pos_tagger = POS_Tagger(pos_tagger)
@@ -38,7 +41,7 @@ class Vectorizer():
         letter_tag = re.sub(numb_regxp, '', rawtag)
         return [letter_tag[:i] for i in range(1, len(letter_tag)+1)]
 
-    def get_vector_matrix(self):
+    def get_vector_matrix(self, freq_floor=4):
         def _update_pos_t_feature():
             f_val = 1
             if word in vectors:
@@ -46,29 +49,47 @@ class Vectorizer():
                     f_val = vectors[word][feature_name] + 1 # if seen before!
             features[feature_name] = f_val
 
+        STOPWORDS = stopwords.words('spanish')
+        def _clean_sent(sent):
+            clean_sent = []
+            # remove stopwords
+            for word, tag in sent:
+                if not word in STOPWORDS:
+                    if not word.isdigit():
+                        clean_sent.append((word, tag))
+            return clean_sent
+
         sents = self.corpus.get_sents()
         tagged_sents = self.pos_tagger.get_tagged_sents(sents)
         
         # will use the words as keys and dict of features as values
+        print('tagged sent: ', _clean_sent(tagged_sents[7]))
         vectors = {}
         for sent in tagged_sents:
-            for word_idx in range(len(sent)):
+            # take off stopwords
+            cleaned_sent = _clean_sent(sent)
+            for word_idx in range(len(cleaned_sent)):
                 features = {}
-                word = sent[word_idx][0].lower()
-                pos_tag = sent[word_idx][1]
+                word = cleaned_sent[word_idx][0].lower()
+                pos_tag = cleaned_sent[word_idx][1]
+
+                # dirty noise catcher
+                if len(word) <= 2:
+                    continue
 
                 # POS-related features
                 features[pos_tag] = 1
                 for sub_tag in self.__tag_combinations(pos_tag):
                     features[sub_tag] = 1
                 if word_idx > 0:
-                    prev_tag = sent[word_idx-1][1]
-                    feature_name = prev_tag + '_prev'
+                    prev_tag = cleaned_sent[word_idx-1][1]
+                    feature_name = prev_tag + '_prev'       # USAR PREFIJO DE PREV_TAG !!?
                     _update_pos_t_feature()     # TODO: tf-iwf !!!!!!!     D:>
-                if word_idx < len(sent)-1:
-                    post_tag = sent[word_idx+1][1]
+                if word_idx < len(cleaned_sent)-1:
+                    post_tag = cleaned_sent[word_idx+1][1]
                     feature_name = post_tag + '_post'
                     _update_pos_t_feature()
+                #agregar feature de synset (wordnet) :0
 
                 # frequency counting
                 if (word in vectors):
@@ -79,9 +100,19 @@ class Vectorizer():
 
                 vectors[word] = features
 
+        # sacar palabras con < 'freq'
+        words_to_pop=set()
+        for word, f_dict in vectors.items():
+            if f_dict['freq'] <= freq_floor:         # PARAMETIZAR LAS OCURRENCIAS!!!!!!!
+                words_to_pop.add(word)
+        for word in words_to_pop:
+            vectors.pop(word)
+
+        # NORMALIZAR TODOS LOS CONTEXTOS! -> diccionario de frequencias de ... TODOS los features que ocurrieron
         self.words = list(vectors.keys())          # thankfully in the same order as vectors.values
 
         vectorizer = DictVectorizer(dtype=numpy.int32)
         vec_matrix = vectorizer.fit_transform(list(vectors.values()))
+        print(vec_matrix.get_shape())
         #print (vectorizer.inverse_transform(vec_matrix)[:10]) # -> to see features!
         return self.words, vec_matrix
