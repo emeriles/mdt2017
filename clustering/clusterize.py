@@ -1,37 +1,72 @@
+"""
+Clusterize words from a given file
+Usage:
+  clusterize.py -k <n> -f <file>
+  clusterize.py -h | --help
+Options:
+  -k <n>            k for k-means clustering algorithm.
+  -f <file>         Input file.
+  -o <file>         Output file.
+  --pos_t <tagger>  POS_tagger ('nltk', or default 'stanford')
+"""
 import preprocess
-
-
 from vectorizer import Vectorizer
 
 from sklearn.cluster import KMeans
-#import docopt
+from docopt import docopt
+from scipy.sparse.csr import csr_matrix
+import numpy as np
+
+WORDS = []
+MATRIX = csr_matrix(0) #    just an empty matrix
+KMEANS = None
+
+def get_cluster_sizes(n_clusters):
+    cluster_sizes = np.zeros(n_clusters)
+    for label in KMEANS.labels_:
+        cluster_sizes[label] += 1
+    return cluster_sizes
+
+def get_word_from_cluster(c_num):
+    words = []
+    for word, label in zip(WORDS, KMEANS.labels_):
+        if label == c_num:
+            words.append(word)
+    return words
 
 if __name__ == '__main__':
-    corpus = preprocess.Corpus_Tokenizer('../../../lavoz_head.txt')
-    vectorizer = Vectorizer(corpus, pos_tagger='stanford')
-    words, matrix = vectorizer.get_vector_matrix()
+    # arg parse
+    opts = docopt(__doc__)
+    print(opts)
+    if not opts['-k'] or not opts['-f']:
+        exit()
+    if not opts['--pos_t']:
+        pos_tagger = 'stanford'
+    n_clusters = int(opts['-k'])
 
-    #print([x for x in zip(words, matrix)][:10])
-    
-    
+    # preprocess corpus
+    corpus = preprocess.Corpus_Tokenizer(opts['-f'])
 
+    # vectorizeee
+    vectorizer = Vectorizer(corpus, pos_tagger=pos_tagger)
+    WORDS, MATRIX = vectorizer.get_vector_matrix()
 
-
-
-"""
-kmeans = KMeans(n_clusters=20, init='k-means++',
+    # get clusters
+    KMEANS = KMeans(n_clusters=n_clusters, init='k-means++',
                 n_init=10, max_iter=300,
                 tol=0.0001, precompute_distances='auto',
                 verbose=0, random_state=None, copy_x=True,
-                n_jobs=1, algorithm='auto').fit(dataset_matrix)
-kmeans.labels_ # que hace?
-#kmeans.predict([[0, 0], [4, 4]])  ... predice a que cluster
-len(kmeans.cluster_centers_[0]) # 322 ... por ahora 
+                n_jobs=1, algorithm='auto').fit(MATRIX)
 
-counts = 0
-for dic,c_lab in zip(vectorizer.inverse_transform(dataset_matrix), kmeans.labels_):
-    if c_lab == 15:
-        counts += 1
-        print (dic, " ", c_lab)
-print(counts)
-"""
+
+
+
+    # PRINTING!!
+    print([x for x in zip(WORDS, KMEANS.labels_)][:10])
+
+    print(get_cluster_sizes(n_clusters))
+
+    clus=get_word_from_cluster(4)
+    print(clus, len(clus))
+    #cluster_sizes = np.array()
+    #len(kmeans.cluster_centers_[0])
