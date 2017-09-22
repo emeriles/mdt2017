@@ -64,7 +64,7 @@ class Vectorizer():
                 if word_idx > 0:
                     prev_tag = sent[word_idx-1][1]
                     feature_name = prev_tag + '_prev'
-                    _update_pos_t_feature()
+                    _update_pos_t_feature()     # TODO: tf-iwf !!!!!!!     D:>
                 if word_idx < len(sent)-1:
                     post_tag = sent[word_idx+1][1]
                     feature_name = post_tag + '_post'
