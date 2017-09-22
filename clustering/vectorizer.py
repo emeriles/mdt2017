@@ -24,7 +24,6 @@ class POS_Tagger():
         return tagged
 
 class Vectorizer():
-    
     def __init__(self, corpus, vec_type='sintactic', pos_tagger='nltk'):
         self.corpus = corpus
         self.vec_type = vec_type
@@ -58,7 +57,8 @@ class Vectorizer():
                     features[sub_tag] = 1
                 if word_idx > 0:
                     prev_tag = sent[word_idx-1][1]
-                    features[prev_tag + '_prev'] = 1
+                    feature_name = prev_tag + '_prev'
+                    features[feature_name] = 1        # si ya existe, contar + 1 !!
                 if word_idx < len(sent)-1:
                     post_tag = sent[word_idx+1][1]
                     features[post_tag + '_post'] = 1
@@ -72,8 +72,8 @@ class Vectorizer():
 
                 vectors[word] = features
 
-        words = list(vectors.keys())          # thankfully in the same order as vectors.values
+        self.words = list(vectors.keys())          # thankfully in the same order as vectors.values
 
         vectorizer = DictVectorizer(dtype=numpy.int32)
-        vec_matrix = vectorizer.fit_transform(list(vectors.values()))
-        return words, vectorizer.inverse_transform(vec_matrix)
+        self.vec_matrix = vectorizer.fit_transform(list(vectors.values()))
+        return self.words, self.vec_matrix
