@@ -41,7 +41,7 @@ class Vectorizer():
         letter_tag = re.sub(numb_regxp, '', rawtag)
         return [letter_tag[:i] for i in range(1, len(letter_tag)+1)]
 
-    def get_vector_matrix(self, freq_floor=4):
+    def get_vector_matrix(self, freq_floor=10):
         def _update_pos_t_feature():
             f_val = 1
             if word in vectors:
@@ -54,6 +54,7 @@ class Vectorizer():
             clean_sent = []
             # remove stopwords
             for word, tag in sent:
+                word = word.lower()
                 if not word in STOPWORDS:
                     if not word.isdigit():
                         clean_sent.append((word, tag))
@@ -63,14 +64,13 @@ class Vectorizer():
         tagged_sents = self.pos_tagger.get_tagged_sents(sents)
         
         # will use the words as keys and dict of features as values
-        print('tagged sent: ', _clean_sent(tagged_sents[7]))
         vectors = {}
         for sent in tagged_sents:
             # take off stopwords
             cleaned_sent = _clean_sent(sent)
             for word_idx in range(len(cleaned_sent)):
                 features = {}
-                word = cleaned_sent[word_idx][0].lower()
+                word = cleaned_sent[word_idx][0]
                 pos_tag = cleaned_sent[word_idx][1]
 
                 # dirty noise catcher
@@ -82,11 +82,11 @@ class Vectorizer():
                 for sub_tag in self.__tag_combinations(pos_tag):
                     features[sub_tag] = 1
                 if word_idx > 0:
-                    prev_tag = cleaned_sent[word_idx-1][1]
+                    prev_tag = cleaned_sent[word_idx-1][1][0]
                     feature_name = prev_tag + '_prev'       # USAR PREFIJO DE PREV_TAG !!?
                     _update_pos_t_feature()     # TODO: tf-iwf !!!!!!!     D:>
                 if word_idx < len(cleaned_sent)-1:
-                    post_tag = cleaned_sent[word_idx+1][1]
+                    post_tag = cleaned_sent[word_idx+1][1][0]
                     feature_name = post_tag + '_post'
                     _update_pos_t_feature()
                 #agregar feature de synset (wordnet) :0
@@ -103,10 +103,12 @@ class Vectorizer():
         # sacar palabras con < 'freq'
         words_to_pop=set()
         for word, f_dict in vectors.items():
-            if f_dict['freq'] <= freq_floor:         # PARAMETIZAR LAS OCURRENCIAS!!!!!!!
+            if f_dict['freq'] <= freq_floor:
                 words_to_pop.add(word)
         for word in words_to_pop:
             vectors.pop(word)
+
+        # agregar palabra
 
         # NORMALIZAR TODOS LOS CONTEXTOS! -> diccionario de frequencias de ... TODOS los features que ocurrieron
         self.words = list(vectors.keys())          # thankfully in the same order as vectors.values
