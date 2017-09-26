@@ -1,13 +1,14 @@
 """
 Clusterize words from a given file
 Usage:
-  clusterize.py -k <n> -f <file>
+  clusterize.py -k <n> -f <file> --freq_f <n>
   clusterize.py -h | --help
 Options:
   -k <n>            k for k-means clustering algorithm.
   -f <file>         Input file.
   -o <file>         Output file.
   --pos_t <tagger>  POS_tagger ('nltk', or default 'stanford')
+  --freq_f <n>      Frequency floor to ignore words.
 """
 import preprocess
 from vectorizer import Vectorizer
@@ -37,27 +38,31 @@ def get_word_from_cluster(c_num):
 
 if __name__ == '__main__':
     # arg parse
+    print('EEEEEEEEEEEEH CDTM')
     opts = docopt(__doc__)
-    # print(opts)
-    if not opts['-k'] or not opts['-f']:
+    print('OPTS: ', opts)
+    if not opts['-k'] or not opts['-f'] or not opts['--freq_f']:
         exit()
+    n_clusters = int(opts['-k'])
     if not opts['--pos_t']:
         pos_tagger = 'stanford'
-    n_clusters = int(opts['-k'])
+    freq_floor = int(opts['--freq_f'])
+
+    
 
     # preprocess corpus
     corpus = preprocess.Corpus_Tokenizer(opts['-f'])
 
     # vectorizeee
     vectorizer = Vectorizer(corpus, pos_tagger=pos_tagger)
-    WORDS, MATRIX = vectorizer.get_vector_matrix()
+    WORDS, MATRIX = vectorizer.get_vector_matrix(freq_floor=freq_floor)
 
     # get clusters
     KMEANS = KMeans(n_clusters=n_clusters, init='k-means++',
                 n_init=10, max_iter=300,
                 tol=0.0001, precompute_distances='auto',
                 verbose=0, random_state=None, copy_x=True,
-                n_jobs=4, algorithm='auto').fit(MATRIX)
+                n_jobs=-1, algorithm='auto').fit(MATRIX)
 
 
 
