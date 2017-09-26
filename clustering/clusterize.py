@@ -15,6 +15,7 @@ from vectorizer import Vectorizer
 from sklearn.cluster import KMeans
 from docopt import docopt
 from scipy.sparse.csr import csr_matrix
+from math import inf
 import numpy as np
 
 WORDS = []
@@ -66,10 +67,17 @@ if __name__ == '__main__':
 
     #print(get_cluster_sizes(n_clusters))
 
+    max_cardinality = 0
+    min_cardinality = inf
     for i in range(n_clusters):
         print('-----------------')
         print('Cluster number ', i)
         words_in_cluster_n = get_word_from_cluster(i)
-        print('Cluster size: ', len(words_in_cluster_n))
+        cluster_cardinality = len(words_in_cluster_n)
+        print('Cluster size: ', cluster_cardinality)
         print('Words: ')
         print(str.join(' ',words_in_cluster_n))
+        max_cardinality = max(cluster_cardinality, max_cardinality)
+        min_cardinality = min(cluster_cardinality, min_cardinality)
+    print('Lower cluster size: ', min_cardinality)
+    print('Highest cluster size: ', max_cardinality)

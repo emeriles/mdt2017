@@ -19,7 +19,7 @@ class Corpus_Tokenizer():
     def __init__(self, filepath):
         self.filepath = filepath
         self.__is_la_voz = ('lavoz' in basename(filepath))
-        if self.__is_la_voz:
+        if True:
             with codecs.open(self.filepath, 'r', 'utf-8') as f:
                 corpus = f.read()
             corpus_sent = LazyLoader('tokenizers/punkt/spanish.pickle').tokenize(corpus)
@@ -30,8 +30,8 @@ class Corpus_Tokenizer():
             self.corpus_clean = PlaintextCorpusReader('.' if root=='' else root, basen)
 
     def get_sents(self):
-        if self.__is_la_voz:
+        if True:
             sents = [regex.findall(sents) for sents in self.corpus_clean]
         else:
-            sents = self.corpus_clean.get_sents()
+            sents = self.corpus_clean.sents()
         return sents
