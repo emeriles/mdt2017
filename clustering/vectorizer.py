@@ -1,6 +1,7 @@
 from nltk.tag import StanfordPOSTagger
 from nltk import pos_tag
 from nltk.corpus import stopwords
+from nltk.stem.snowball import SpanishStemmer
 
 from sklearn.feature_extraction import DictVectorizer
 import random
@@ -68,6 +69,7 @@ class Vectorizer():
 
         sents = self.corpus.get_sents()
         tagged_sents = self.pos_tagger.get_tagged_sents(sents)
+        stemmer = SpanishStemmer()
         
         # will use the words as keys and dict of features as values
         vectors = {}
@@ -114,6 +116,7 @@ class Vectorizer():
                 # get n words from context as features (stemmed...)
                 for i in range(context_words):
                     ctxt_word = (random.choice(cleaned_sent))[0]
+                    feature_word = stemmer.stem(ctxt_word)
                     feature_name = ctxt_word + '_ctxt_word'
                     features = _update_feature(word, feature_name, features)
                 #agregar feature de synset (wordnet) :0
