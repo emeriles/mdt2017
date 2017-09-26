@@ -38,17 +38,14 @@ def get_word_from_cluster(c_num):
 
 if __name__ == '__main__':
     # arg parse
-    print('EEEEEEEEEEEEH CDTM')
     opts = docopt(__doc__)
-    print('OPTS: ', opts)
+    # print('OPTS: ', opts)
     if not opts['-k'] or not opts['-f'] or not opts['--freq_f']:
         exit()
     n_clusters = int(opts['-k'])
     if not opts['--pos_t']:
         pos_tagger = 'stanford'
     freq_floor = int(opts['--freq_f'])
-
-    
 
     # preprocess corpus
     corpus = preprocess.Corpus_Tokenizer(opts['-f'])
