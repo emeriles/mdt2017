@@ -20,7 +20,9 @@ class POS_Tagger():
 
     def get_tagged_sents(self, sents):
         if self.tagger == 'stanford':
-            tagger = StanfordPOSTagger(self.__tag_path_to_model, self.__tag_path_to_jar)
+            # java_options -mx3000m sets memory use in 3GB
+            tagger = StanfordPOSTagger(self.__tag_path_to_model, 
+                        self.__tag_path_to_jar, java_options='-mx3000m', verbose=True)
             tagged = tagger.tag_sents(sents)
              # TODO: desdoblar el vector vimp ... así queda 'verb' = True, 'verb & singular'=True
         else:
@@ -42,7 +44,7 @@ class Vectorizer():
         letter_tag = re.sub(numb_regxp, '', rawtag)
         return [letter_tag[:i] for i in range(1, len(letter_tag)+1)]
 
-    def get_vector_matrix(self, freq_floor=15, context_words=3):
+    def get_vector_matrix(self, freq_floor=50, context_words=3):
         
         STOPWORDS = stopwords.words('spanish')
         def _clean_sent(sent):
@@ -132,7 +134,7 @@ class Vectorizer():
             vectors.pop(word)
 
         for word, f_dict in vectors.items():
-            print(word, f_dict)
+            #print(word, f_dict)
             f_dict['freq'] = 0
             vectors[word] = f_dict # delete an irrelevant dimension!
         # normalizar los contextos de POS
