@@ -1,0 +1,304 @@
+------------Entrenando con 4000 noticias, frequency floor 50, y 40 clústers, se encontraron clusters como (1 por línea):
+
+escuela tribunal mañana casa centro toma hecho cuenta
+
+educación
+
+sólo
+
+capital corte chile dilma nación federal sota cámara interior correa río kirchner ecuador brasil lula belgrano
+
+presidente partido parte gobernador
+
+aseguró dice debe
+
+5000 lineas (172, 5504)
+
+nacional provincial
+
+país empresa ciudad vez
+
+pesos
+
+lugar mujer cargo política centro ruta juez diario peronismo campaña toma mañana protesta tribunal sector cuenta candidato jefe lado ministro mundo hecho sociedad
+
+primer últimos último primera
+
+días chicos personas estudiantes
+
+
+------------Entrenando con 5000 noticias, frequency floor 25 y 50 clústers se encontraron clusters como (1 por línea):
+
+pesos
+
+ministerio sota cámara voz casa corte ejecutivo afip nación universidad unión
+
+tener hacer ver
+
+julio enero ello domingo dólares viernes marzo nadie octubre septiembre cómo jueves miércoles lunes agosto personal
+
+casi así menos después frente siempre bien
+
+dicen sigue debe pueden deben viene podría quiere hacen existe parece dice trata vamos
+
+interior chile kirchner villa lula aires brasil schiaretti dilma río correa ecuador belgrano
+
+alta importante nuevos alto difícil actual grandes buena posible mejor docentes especial principal largo principales diferentes interna única mismo propio igual misma fuerte mayores propia próximo
+
+y finalmente un cluster con 123 palabras!
+
+
+------------- A continuación se muestra todos los clusters de una corrida con los siguientes parámetros:
+Resultado de entrenamiento con 500 palabras, frequency_flor=30, K=50
+-----------------
+Cluster number  0
+Cluster size:  123
+Words: 
+violencia futuro movimiento avenida vía carne dirigente marco problema paso medio economía resto presidenta tema fondo clase senador orden libertad seguridad titular transporte obra encuentro crimen tarde abogado reforma historia zona agua comisión actividad juicio debate inversión asamblea organización roca hecho fuerza infraestructura desarrollo servicio región administración proceso hospital respecto causa fiscal funcionario comunicado pedido pese cara conducción gente oficialismo objetivo golpe fiesta director punto ejemplo inflación derecho programa norte turno riesgo familia crisis estrategia mañana nivel vuelta marcha conflicto fallo participación pueblo reclamo falta democracia presupuesto sede calidad valor kirchnerismo salud hombre hijo comercio colegio crecimiento mercado mano cantidad oposición persona tribunal candidata idea realidad deuda red apoyo diálogo cuestión mandatario acto prensa producción población posición fecha discusión modelo intento destino confianza
+-----------------
+Cluster number  1
+Cluster size:  1
+Words: 
+ley
+-----------------
+Cluster number  2
+Cluster size:  1
+Words: 
+años
+-----------------
+Cluster number  3
+Cluster size:  1
+Words: 
+córdoba
+-----------------
+Cluster number  4
+Cluster size:  7
+Words: 
+casi así menos después frente siempre bien
+-----------------
+Cluster number  5
+Cluster size:  14
+Words: 
+dicen sigue debe pueden deben viene podría quiere hacen existe parece dice trata vamos
+-----------------
+Cluster number  6
+Cluster size:  13
+Words: 
+interior chile kirchner villa lula aires brasil schiaretti dilma río correa ecuador belgrano
+-----------------
+Cluster number  7
+Cluster size:  26
+Words: 
+alta importante nuevos alto difícil actual grandes buena posible mejor docentes especial principal largo principales diferentes interna única mismo propio igual misma fuerte mayores propia próximo
+-----------------
+Cluster number  8
+Cluster size:  11
+Words: 
+semana partido plan forma caso educación proyecto poder grupo tiempo fin
+-----------------
+Cluster number  9
+Cluster size:  1
+Words: 
+dos
+-----------------
+Cluster number  10
+Cluster size:  1
+Words: 
+ciento
+-----------------
+Cluster number  11
+Cluster size:  19
+Words: 
+aseguró comenzó pasó señaló pudo logró advirtió informó destacó sostuvo indicó hizo agregó afirmó llegó dio explicó dejó quedó
+-----------------
+Cluster number  12
+Cluster size:  1
+Words: 
+ser
+-----------------
+Cluster number  13
+Cluster size:  1
+Words: 
+puede
+-----------------
+Cluster number  14
+Cluster size:  1
+Words: 
+sólo
+-----------------
+Cluster number  15
+Cluster size:  1
+Words: 
+dijo
+-----------------
+Cluster number  16
+Cluster size:  4
+Words: 
+días estudiantes chicos personas
+-----------------
+Cluster number  17
+Cluster size:  2
+Words: 
+nacional provincial
+-----------------
+Cluster number  18
+Cluster size:  2
+Words: 
+tres mil
+-----------------
+Cluster number  19
+Cluster size:  40
+Words: 
+niños dirigentes medios reclamos tomas cargos miembros vecinos policías jóvenes legisladores países medidas trabajadores fuerzas funcionarios candidatos acciones ciudadanos derechos instituciones hechos resultados metas servicios kilómetros planes semanas hijos empresarios recursos padres fuentes ingresos urnas precios fondos mujeres casos datos
+-----------------
+Cluster number  20
+Cluster size:  1
+Words: 
+millones
+-----------------
+Cluster number  21
+Cluster size:  5
+Words: 
+segunda segundo últimos primeros último
+-----------------
+Cluster number  22
+Cluster size:  29
+Words: 
+pública electoral provinciales policial junto cordobés oficial políticas oficiales social final político judicial total públicos políticos local radical internacional brasileño cordobeses sociales nacionales presidencial secundarios público sino electrónico brasileña
+-----------------
+Cluster number  23
+Cluster size:  1
+Words: 
+según
+-----------------
+Cluster number  24
+Cluster size:  1
+Words: 
+hace
+-----------------
+Cluster number  25
+Cluster size:  46
+Words: 
+lado medida plazo posibilidad relación sociedad decisión información través diario ministro momento sector noche vida cuenta mundo escuela voto tipo jefe gestión acuerdo intendente candidato trabajo peronismo protesta juez centro situación ruta mujer cargo toma mayoría lugar embargo reunión cambio sistema mes política elección manera campaña
+-----------------
+Cluster number  26
+Cluster size:  12
+Words: 
+algún cinco ocho ambos seis tal alguna ningún varias siete cuatro unas
+-----------------
+Cluster number  27
+Cluster size:  37
+Words: 
+cristina santa ipem paz jerónimo suprema grahovac unidos verde néstor rodríguez giacomino serra epec daniel pablo fernández turismo hugo sala nobel marina cuarto central rafael cta alejandro carbó instituto américa congreso silva cabrera apablaza rousseff federal sur
+-----------------
+Cluster number  28
+Cluster size:  3
+Words: 
+presidente gobernador país
+-----------------
+Cluster number  29
+Cluster size:  1
+Words: 
+cada
+-----------------
+Cluster number  30
+Cluster size:  9
+Words: 
+argentina luis buenos maría manuel juan josé carlos san
+-----------------
+Cluster number  31
+Cluster size:  19
+Words: 
+aún mientras entonces tan recién primero nunca tampoco anoche atrás aquí cerca incluso dentro alrededor allá mal allí todavía
+-----------------
+Cluster number  32
+Cluster size:  4
+Words: 
+tras bajo hacia mediante
+-----------------
+Cluster number  33
+Cluster size:  1
+Words: 
+gobierno
+-----------------
+Cluster number  34
+Cluster size:  4
+Words: 
+hoy luego ahora además
+-----------------
+Cluster number  35
+Cluster size:  1
+Words: 
+ayer
+-----------------
+Cluster number  36
+Cluster size:  3
+Words: 
+varios toda todas
+-----------------
+Cluster number  37
+Cluster size:  1
+Words: 
+año
+-----------------
+Cluster number  38
+Cluster size:  1
+Words: 
+pesos
+-----------------
+Cluster number  39
+Cluster size:  11
+Words: 
+ministerio sota cámara voz casa corte ejecutivo afip nación universidad unión
+-----------------
+Cluster number  40
+Cluster size:  3
+Words: 
+tener hacer ver
+-----------------
+Cluster number  41
+Cluster size:  16
+Words: 
+julio enero ello domingo dólares viernes marzo nadie octubre septiembre cómo jueves miércoles lunes agosto personal
+-----------------
+Cluster number  42
+Cluster size:  5
+Words: 
+gran nueva mayor nuevo general
+-----------------
+Cluster number  43
+Cluster size:  14
+Words: 
+escuelas veces elecciones horas sectores votos obras autoridades alumnos meses empresas colegios problemas cosas
+-----------------
+Cluster number  44
+Cluster size:  2
+Words: 
+primera primer
+-----------------
+Cluster number  45
+Cluster size:  4
+Words: 
+justicia policía provincia capital
+-----------------
+Cluster number  46
+Cluster size:  1
+Words: 
+pasado
+-----------------
+Cluster number  47
+Cluster size:  16
+Words: 
+dar partir lograr evitar tomar trabajar decir llegar realizar pueda sido pagar pasar conocer haber siendo
+-----------------
+Cluster number  48
+Cluster size:  5
+Words: 
+parte vez empresa día ciudad
+-----------------
+Cluster number  49
+Cluster size:  1
+Words: 
+aunque
+Lower cluster size:  1
+Highest cluster size:  123
