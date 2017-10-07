@@ -1,5 +1,8 @@
 # mdt2017
 
+
+# Parte 1 (Clustering)
+
 # Elección del corpus
 
 Debido a las limitaciones materiales de infraestructura y lo pesado del procesamiento, se optó por un corpus de texto plano de aproximadamente 34 MB. Se trata de una recolección de noticias de 35 Mb aproximadamente. Es para éste corpus que se particularizó el código, y se trabajó con fragmentos de hasta 5000 noticias.
@@ -52,4 +55,55 @@ Además del stemming sobre palabras de contexto, se usó para reducir la dimensi
 
 Se comprendió que en esta técnica de aprendizaje no supervisado, las elecciones de diseño y configuración son muchísimas. Desde la elección de tokenizadores hasta la elección de centroides iniciales para las iteraciones, el problema es amplio. Sin embargo, con las sucesivas corridas del algoritmo se fueron encontrando relaciones importantes dentro de los clústers.
 Muchos de los detalles específicos de la solución presentada fueron ya descriptos y ejemplificados.
-Algunos resultados pueden ser vistos en results.txt
+Algunos resultados pueden ser vistos en `results_1ra_parte.txt`
+
+# Parte 2 (Feature selection)
+
+## Descripción del corpus no anotado
+
+El preproceso y la preparación para el corpus fue exactamente la misma que para la primera parte.
+
+## Descripción de las librerías utilizadas
+
+Para esta segunda parte se usó la librería [Spacy](https://spacy.io/). Es una librería "de fuerza industrial" para procesamiento de lenguaje natural. De ella se pudieron extraer con mucha facilidad una variedad mas amplia de features que en la version pasada (Véase Parte 1)
+Otra librería fundamental en el presente trabajo es [scikit-learn](http://scikit-learn.org). De la misma se usaron tanto la técnica principal de K-Means, como así también tecnicas de selección de features y de normalización de matrices.
+
+## Features trabajados
+
+ - POS tag
+ - POS tag de palabra previa y siguiente
+ - triplas de dependencia con respecto a la raiz de una palabra
+ - palabras de contexto en la oración
+
+La forma de implementación de las palabras de contexto fue similar al de la primera parte, mientras que los POS tags esta vez fueron los retornados por Spacy, que tienen un poco menos de riqueza de información en los tags.
+Con respecto a las triplas de dependencia, se extrajo, en un mismo feature, la relación de dependencia y la palabra (objetivo) con respecto a la cuál existe tal relación. A su vez, a la palabra objetivo: se la tomó siempre en minúscula y además se la procesó con un _stemmer_ (el mismo que el de la primera parte); y se dejó de lado toda relación de una palabra consigo misma. Todo ello para prevenir explosiones de dimensionalidad.
+
+## Tecnica no supervisada de feature selection
+
+Las técnicas no supervisadas de feature selection consideradas fueron dos:
+ -  [_Variance Treshold_](http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.VarianceThreshold.html#sklearn.feature_selection.VarianceThreshold)
+ -  [_Singular Value Descomposition_](http://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html) (_SVD_)
+
+En ambos casos se hizo antes un proceso de normalización utilizando la [función Normalize de scikit-learn](http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.normalize.html).
+Luego de muchos intentos, la ténica de _Variance Treshold_ no arrojó resultados positivos. En efecto, los clusters obtenidos consistían todos "singletones" (cluster que contiene una palabra), exceptuando uno de ellos que contenía al resto de las palabras. Se probó con variar el treshold (desde 0.000000001 hasta 0.01) viendo que claramente las dimensiones de los features se reducían, aunque a pesar de ello, los resultados antes mencionados se matenían.
+La técnica que sí arrojó resultados interesantes fue SVD. Se notó una leve mejora con respecto a la no aplicación de SVD.
+
+## Resultados y su discusión
+
+Para apreciar las diferencias veamos clusters donde se repitan palabras similares. Se harán comparaciones entre resultados obtenidos con normalización y reducción de dimensionalidad (Full), y resultados sin ninguna de estas características(Raw).
+
+Clusters de palabras seleccionadas sobre _Raw_:
+ - octubre servicio septiembre marzo enero dólares agosto cambio julio
+ - san juan
+ - sistema decisión plan chicos elección grupo proyecto
+ - brasil chile dilma interior ecuador río lula
+ - alejandro daniel jerónimo marina rafael instituto cristina hugo néstor santa
+
+Clusters de palabras seleccionadas sobre _Full_:
+ - agosto octubre enero julio marzo infraestructura agua septiembre dólares
+ - rafael san santa josé hugo daniel jerónimo juan manuel instituto carlos néstor marina cristina villa alejandro
+ - conducción acto caso modelo ciudad plan sede encuentro toma estrategia decisión mano resto pedido tipo ley
+ - apablaza cabrera río brasil chile ecuador turismo américa lula españa córdoba dilma
+ - resultados tomas proyecto zona región vecinos oposición hombre
+
+Si bien se trata de una muestra parcial de los métodos aquí expuestos, se puede ver cómo las técnicas mezclaron palabras entre los clusters. Es así que, tal vez, las mejoras son en realidad parciales. Con respecto al tiempo de ejecución, no se notaron diferencias significativas. Se presume que es a causa de que el alivianamiento de tareas por un lado (el trabajar con menos features a la hora de clusterizar) compensa por otro lado con la tarea de reducir dimensionalidad.
