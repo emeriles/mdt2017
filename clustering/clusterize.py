@@ -51,13 +51,13 @@ if __name__ == '__main__':
     corpus = preprocess.Corpus_Tokenizer(opts['-f'])
 
     # vectorizeee
-    vectorizer = Vectorizer(corpus, pos_tagger=pos_tagger)
+    vectorizer = Vectorizer(corpus)
     WORDS, MATRIX = vectorizer.get_vector_matrix(freq_floor=freq_floor)
 
     # get clusters
     KMEANS = KMeans(n_clusters=n_clusters, init='k-means++',
                 n_init=10, max_iter=300,
-                tol=0.0001, precompute_distances='auto',
+                tol=0.000001, precompute_distances='auto',
                 verbose=0, random_state=None, copy_x=True,
                 n_jobs=-1, algorithm='auto').fit(MATRIX)
 
@@ -82,4 +82,4 @@ if __name__ == '__main__':
         max_cardinality = max(cluster_cardinality, max_cardinality)
         min_cardinality = min(cluster_cardinality, min_cardinality)
     print('Lower cluster size: ', min_cardinality)
-    print('Highest cluster size: ', max_cardinality)
+    print('Highest cluster size')

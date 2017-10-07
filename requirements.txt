@@ -6,3 +6,5 @@ pickleshare
 scikit-learn
 scipy
 sklearn
+spacy>=1.8.0,<2.0.0
+-e https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-1.2.0/en_core_web_sm-1.2.0.tar.gz#egg=en_core_web_sm-1.2.0

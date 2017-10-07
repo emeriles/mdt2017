@@ -1,13 +1,20 @@
 from nltk.tag import StanfordPOSTagger
-from nltk import pos_tag
+#from nltk import pos_tag
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SpanishStemmer
 
 from sklearn.feature_extraction import DictVectorizer
 import random
 import numpy
-
 import re
+
+import spacy
+import es_core_web_md
+
+from scipy.sparse import vstack
+from sklearn.preprocessing import normalize
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.decomposition import TruncatedSVD
 
 
 
@@ -23,7 +30,7 @@ class POS_Tagger():
         if self.tagger == 'stanford':
             # java_options -mx3000m sets memory use in 3GB
             tagger = StanfordPOSTagger(self.__tag_path_to_model, 
-                        self.__tag_path_to_jar, java_options='-mx3000m', verbose=True)
+                        self.__tag_path_to_jar, java_options='-mx3000m')
             tagged = tagger.tag_sents(sents)
              # TODO: desdoblar el vector vimp ... así queda 'verb' = True, 'verb & singular'=True
         else:
@@ -31,10 +38,8 @@ class POS_Tagger():
         return tagged
 
 class Vectorizer():
-    def __init__(self, corpus, vec_type='morphosyntactic', pos_tagger='nltk'):
-        self.corpus = corpus
-        self.vec_type = vec_type
-        self.pos_tagger = POS_Tagger(pos_tagger)
+    def __init__(self, corpus_tok):
+        self.corpus = corpus_tok
         self.words = None
 
     def __tag_combinations(self, rawtag):
@@ -47,15 +52,16 @@ class Vectorizer():
 
     def get_vector_matrix(self, freq_floor=50, context_words=3):
         
-        STOPWORDS = stopwords.words('spanish')
+        nlp = es_core_web_md.load()
+        STOPWORDS = spacy.es.STOP_WORDS
         def _clean_sent(sent):
             clean_sent = []
             # remove stopwords
-            for word, tag in sent:
+            for word in sent:
                 word = word.lower()
                 if not word in STOPWORDS:
                     if not word.isdigit():
-                        clean_sent.append((word, tag))
+                        clean_sent.append(word)
             return clean_sent
 
         def _update_feature(word, feature_name, features):
@@ -67,21 +73,31 @@ class Vectorizer():
             features[feature_name] = counts
             return features
 
+        def _update_counts(feature_name, f_counts):
+            counts = 1
+            if feature_name in f_counts:
+                counts = f_counts[feature_name] + 1
+            f_counts[feature_name] = counts
+            return f_counts
+
         sents = self.corpus.get_sents()
-        tagged_sents = self.pos_tagger.get_tagged_sents(sents)
         stemmer = SpanishStemmer()
         
         # will use the words as keys and dict of features as values
         vectors = {}
-        freq_counts = {}
-        for sent in tagged_sents:
+        #freq_counts = {}
+        for sent in sents:
+            # TODO: PARALELLIZE!!
+            #for doc in nlp.pipe(texts, batch_size=10000, n_threads=3):
             # take off stopwords && to get context_words!
             cleaned_sent = _clean_sent(sent)
-            for word_idx in range(len(sent)):
+            doc = nlp(' '.join(sent))
+            for word_idx in range(len(doc)):
                 # get the word and the pos tag
-                word = sent[word_idx][0]
-                word = word.lower()
-                pos_tag = sent[word_idx][1]
+                spacy_word = doc[word_idx]
+                word = spacy_word.text.lower()
+
+                pos_tag = spacy_word.pos_
 
                 if len(word) <= 2:
                     continue
@@ -95,32 +111,37 @@ class Vectorizer():
                     features = {}
                 else:
                     features = vectors[word]
+
                 # counts of frequency to normalze later
-                #if pos_tag[0] in freq_counts:
-                #    freq_counts[pos_tag[0]] += 1
-                #else:
-                #    freq_counts[pos_tag[0]] = 1
+                #freq_counts = _update_counts(pos_tag, freq_counts)
 
                 # context related (POS and words stemmed)
-                for sub_tag in self.__tag_combinations(pos_tag):
-                    features = _update_feature(word, sub_tag, features)
+                features = _update_feature(word, pos_tag, features)
                 if word_idx > 0:
-                    prev_tag = sent[word_idx-1][1][0]
-                    feature_name = prev_tag + '_pos_prev'       # USAR PREFIJO DE PREV_TAG !!?
-                    features = _update_feature(word, feature_name, features)     # TODO: tf-iwf !!!!!!!     D:>
+                    prev_tag = doc[word_idx-1].pos_
+                    feature_name = prev_tag + '_pos_prev'
+                    features = _update_feature(word, feature_name, features)
                 if word_idx < len(sent)-1:
-                    post_tag = sent[word_idx+1][1][0]
+                    post_tag = doc[word_idx+1].pos_
                     feature_name = post_tag + '_pos_post'
                     features = _update_feature(word, feature_name, features)
 
-                # get n words from context as features (stemmed...)
+
+                # dependency features. the objective of the dep is stemmed!
+                dep_type = spacy_word.dep_
+                if dep_type!='ROOT':
+                    dep_obj = stemmer.stem(spacy_word.head.text.lower())
+                    feature_name = 'DEP:' + dep_type + '-' + dep_obj
+                    features = _update_feature(word, feature_name, features)
+
+                # get n words from context as features (stemmed...!)
                 for i in range(context_words):
-                    ctxt_word = (random.choice(cleaned_sent))[0]
+                    ctxt_word = (random.choice(cleaned_sent))
                     feature_word = stemmer.stem(ctxt_word)
                     feature_name = ctxt_word + '_ctxt_word'
                     features = _update_feature(word, feature_name, features)
-                #agregar feature de synset (wordnet) :0
-
+                # agregar feature de synset (wordnet) :0
+                features['word'] = word
                 
                 # frequency counting
                 features = _update_feature(word, 'freq', features)
@@ -154,5 +175,32 @@ class Vectorizer():
         vectors_shape = vec_matrix.get_shape()
         print(vectors_shape)
 
-        #print (vectorizer.inverse_transform(vec_matrix)[:10]) # -> to see features!
+        """
+        freqs_vector = vectorizer.transform(freq_counts)
+
+        vec_matrix = vstack([freqs_vector, vec_matrix])
+        print(s.get_shape)
+        print(s)
+        print(vectorizer.inverse_transform(s))
+        """
+
+        # normalization
+        vec_matrix = normalize(vec_matrix, copy=False)
+
+        ####### reduccion de dim no sup
+        # reducir dimensionalidad con variance treshold
+        #selector = VarianceThreshold(threshold = 0.0)
+        #vec_matrix = selector.fit_transform(vec_matrix)
+
+        # SVD (PCA)
+        Trunc_svd = TruncatedSVD(n_components=1500)
+        vec_matrix = Trunc_svd.fit_transform(vec_matrix)
+
+        # reducir dimensionalidad con percentile de varianza
+        #selected = SelectPercentile(chi2, percentile = 10)
+        #word_vecs_new=selected.fit_transform(new_word_vecs,target_vec)
+
+
+        print(vectorizer.inverse_transform(vec_matrix)) # -> to see features!
+
         return self.words, vec_matrix
