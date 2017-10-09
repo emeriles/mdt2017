@@ -3,6 +3,10 @@
 
 # Parte 1 (Clustering)
 
+[Link a la entrega de la primera parte del proyecto](https://github.com/emeriles/mdt2017/tree/c2d515f9fc74e055762a5d2ea2bd9005ac974730)
+
+[Link a la entrega de la segunda parte del proyecto](https://github.com/emeriles/mdt2017#parte-2-feature-selection)
+
 # Elección del corpus
 
 Debido a las limitaciones materiales de infraestructura y lo pesado del procesamiento, se optó por un corpus de texto plano de aproximadamente 34 MB. Se trata de una recolección de noticias de 35 Mb aproximadamente. Es para éste corpus que se particularizó el código, y se trabajó con fragmentos de hasta 5000 noticias.
